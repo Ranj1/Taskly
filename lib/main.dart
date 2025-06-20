@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'blocs/task/task_bloc.dart';
+import 'blocs/task/task_event.dart';
+import 'data/database/task_database.dart';
+import 'pages/home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  final taskDatabase = TaskDatabase();
+
+  runApp(MyApp(taskDatabase: taskDatabase));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final TaskDatabase taskDatabase;
 
-  // This widget is the root of your application.
+  const MyApp({Key? key, required this.taskDatabase}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return BlocProvider(
+      create: (_) => TaskBloc(db: taskDatabase)..add(LoadTasks()),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Taskly',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: const HomePage(),
       ),
-      //home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
-
-
