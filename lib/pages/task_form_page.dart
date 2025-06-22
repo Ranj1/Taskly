@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/task/task_bloc.dart';
-import '../blocs/task/task_event.dart';
+import '../bloc/task_bloc.dart';
+import '../bloc/task_event.dart';
 import '../data/models/task_model.dart';
 
 class TaskFormPage extends StatefulWidget {
   final Task? task;
-
   const TaskFormPage({Key? key, this.task}) : super(key: key);
 
   @override
@@ -15,24 +15,21 @@ class TaskFormPage extends StatefulWidget {
 
 class _TaskFormPageState extends State<TaskFormPage> {
   final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
   DateTime? _dueDate;
+  int _priority = 0;
+  String? _selectedLabel;
+
+  final List<String> labels = ['Home', 'Work', 'Food', 'Music'];
 
   @override
   void initState() {
     super.initState();
     if (widget.task != null) {
       _titleController.text = widget.task!.title;
-      _descriptionController.text = widget.task!.description;
+      _selectedLabel = widget.task!.label;
       _dueDate = widget.task!.dueDate;
+      _priority = widget.task!.priority;
     }
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
   }
 
   Future<void> _pickDate() async {
@@ -46,22 +43,28 @@ class _TaskFormPageState extends State<TaskFormPage> {
   }
 
   void _save() {
-    if (_titleController.text.isEmpty || _dueDate == null) return;
-
-    final task = Task(
+    if (_titleController.text.trim().isEmpty || _dueDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter all details')),
+      );
+      return;
+    }
+    final newTask = Task(
       id: widget.task?.id,
-      title: _titleController.text,
-      description: _descriptionController.text,
+      title: _titleController.text.trim(),
+      label: _selectedLabel!,
       dueDate: _dueDate!,
       isDone: widget.task?.isDone ?? false,
+      priority: _priority
     );
 
-    if (widget.task == null) {
-      context.read<TaskBloc>().add(AddTask(task));
-    } else {
-      context.read<TaskBloc>().add(UpdateTask(task));
-    }
+    print("${widget.task?.id} ===== ${_titleController.text.trim()} ==== ${_selectedLabel!} ====== ${ _dueDate!} ==== ${widget.task?.isDone}  === ${_priority}");
 
+    if (widget.task == null) {
+      context.read<TaskBloc>().add(AddTask(newTask));
+    } else {
+      context.read<TaskBloc>().add(UpdateTask(newTask));
+    }
     Navigator.pop(context);
   }
 
@@ -69,45 +72,103 @@ class _TaskFormPageState extends State<TaskFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.task == null ? 'Add Task' : 'Edit Task'),
+        backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
+        title: Text(widget.task == null ? 'Add Todo' : 'Edit Todo'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _dueDate == null
-                        ? 'No due date picked'
-                        : 'Due: ${_dueDate!.toLocal().toString().split(' ').first}',
-                  ),
+              decoration: InputDecoration(
+                labelText: 'What needs to be done?',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                ElevatedButton(
-                  onPressed: _pickDate,
-                  child: const Text('Pick Date'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: _selectedLabel,
+              decoration: InputDecoration(
+                labelText: 'Label',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              items: labels
+                  .map((label) =>
+                  DropdownMenuItem(value: label, child: Text(label)))
+                  .toList(),
+              onChanged: (newValue) => setState(() => _selectedLabel = newValue),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              title: Text(
+                _dueDate == null
+                    ? 'Pick Due Date'
+                    : DateFormat('EEE, d MMM yyyy').format(_dueDate!),
+              ),
+              leading: const Icon(Icons.calendar_today),
+              trailing: const Icon(Icons.edit),
+              tileColor: Colors.blue[50],
+              shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              onTap: _pickDate,
+            ),
+            const SizedBox(height: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Priority',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                Slider(
+                  activeColor:Colors.blue,
+                  value: _priority.toDouble(),
+                  min: 0,
+                  max: 2,
+                  divisions: 2,
+                  label: _priority == 0 ? 'Low' : _priority == 1 ? 'Medium' : 'High',
+                  onChanged: (newValue) {
+                    setState(() => _priority = newValue.round());
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text('Low'),
+                    Text('Medium'),
+                    Text('High'),
+                  ],
                 ),
               ],
             ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: _save,
-              child: const Text('Save'),
+
+            const SizedBox(height: 24),
+            SizedBox(
+
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+
+                ),
+                onPressed: _save,
+                child: const Text(
+                  'Done',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600,color: Colors.white),
+                ),
+              ),
             ),
           ],
         ),

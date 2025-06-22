@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'blocs/task/task_bloc.dart';
-import 'blocs/task/task_event.dart';
+
+import 'bloc/task_bloc.dart';
+import 'bloc/task_event.dart';
 import 'data/database/task_database.dart';
 import 'pages/home_page.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: const HomePage(),
+        home:  HomePage(),
       ),
     );
   }

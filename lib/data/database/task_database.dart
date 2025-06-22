@@ -32,9 +32,10 @@ class TaskDatabase {
       CREATE TABLE tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-        description TEXT,
+        label TEXT,
         dueDate TEXT NOT NULL,
-        isDone INTEGER NOT NULL
+        isDone INTEGER NOT NULL,
+        priority INTEGER NOT NULL DEFAULT 0
       )
     ''');
   }
@@ -49,6 +50,7 @@ class TaskDatabase {
   Future<List<Task>> getTasks() async {
     final db = await database;
     final result = await db.query('tasks', orderBy: 'dueDate ASC');
+
     return result.map((map) => Task.fromMap(map)).toList();
   }
 

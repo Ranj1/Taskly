@@ -26,6 +26,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onAddTask(AddTask event, Emitter<TaskState> emit) async {
+    print(event.task);
     await db.insertTask(event.task);
     add(LoadTasks());
   }
