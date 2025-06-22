@@ -10,7 +10,9 @@ import 'task_form_page.dart';
 enum Filter { all, completed, pending }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final VoidCallback onToggleTheme;
+
+  const HomePage({Key? key, required this.onToggleTheme}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 10),
           const Text(
             'Todos you add will appear here',
-            style: TextStyle(fontSize: 16, color: Colors.black54),
+            style: TextStyle(fontSize: 16),
           ),
         ],
       ),
@@ -91,12 +93,9 @@ class _HomePageState extends State<HomePage> {
         );
       },
       child: Card(
-        color: Colors.white,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 3,
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           title: Text(
             task.title,
             style: TextStyle(
@@ -108,15 +107,11 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              Row(
-                children: [
-                  if (task.label.isNotEmpty)
-                    Text(
-                      task.label,
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                ],
-              ),
+              if (task.label.isNotEmpty)
+                Text(
+                  task.label,
+                  style: const TextStyle(fontSize: 12),
+                ),
               const SizedBox(height: 10),
               Row(
                 children: [
@@ -136,17 +131,16 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           trailing: Checkbox(
-            side: const BorderSide(
-              color: Colors.grey,
-              width: 1.5,
-            ),
+            side: const BorderSide(width: 1.5),
             value: task.isDone,
             onChanged: (_) => context.read<TaskBloc>().add(ToggleTaskStatus(task)),
           ),
           onTap: () async {
             await Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => TaskFormPage(task: task)),
+              MaterialPageRoute(
+                builder: (_) => TaskFormPage(task: task),
+              ),
             );
             context.read<TaskBloc>().add(LoadTasks());
           },
@@ -159,37 +153,48 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
-        foregroundColor: Colors.white,
         title: const Text(
           'Todos',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
         ),
         actions: [
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.light
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+            tooltip: 'Toggle Theme',
+            onPressed: widget.onToggleTheme,
+          ),
           Padding(
-            padding: EdgeInsets.only(right:10,left: 10),
+            padding: const EdgeInsets.only(right: 8.0),
             child: DropdownButton<Filter>(
               value: _selectedFilter,
               underline: const SizedBox(),
-              icon: const Icon(Icons.filter_list, color: Colors.white),
-              dropdownColor: Colors.blueAccent,
-              onChanged: (newValue) {
-                if (newValue != null) {
-                  setState(() => _selectedFilter = newValue);
-                }
-              },
+              icon: const Icon(Icons.filter_list),
+              onChanged: (newValue) => setState(() => _selectedFilter = newValue!),
               items: [
                 DropdownMenuItem(
                   value: Filter.all,
-                  child: Container(padding: EdgeInsets.only(right:10),child: const Text('All Task', style: TextStyle(color: Colors.white))),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: const Text('All Task'),
+                  ),
                 ),
                 DropdownMenuItem(
                   value: Filter.completed,
-                  child: Container(padding: EdgeInsets.only(right:10),child: const Text('Completed', style: TextStyle(color: Colors.white))),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: const Text('Completed'),
+                  ),
                 ),
                 DropdownMenuItem(
                   value: Filter.pending,
-                  child: const Text('Pending', style: TextStyle(color: Colors.white)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: const Text('Pending'),
+                  ),
                 ),
               ],
             ),
@@ -197,7 +202,6 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
         onPressed: () async {
           await Navigator.push(
             context,
@@ -205,7 +209,7 @@ class _HomePageState extends State<HomePage> {
           );
           context.read<TaskBloc>().add(LoadTasks());
         },
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add),
       ),
       body: BlocBuilder<TaskBloc, TaskState>(
         builder: (context, state) {
@@ -215,11 +219,14 @@ class _HomePageState extends State<HomePage> {
             final filteredTasks = _applyFilter(state.tasks);
             return filteredTasks.isEmpty
                 ? _buildEmptyState()
-                : ListView(
-              children: filteredTasks
-                  .map((task) => _buildTaskCard(context, task))
-                  .toList(),
-            );
+                : Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: ListView(
+                          children: filteredTasks
+                    .map((task) => _buildTaskCard(context, task))
+                    .toList(),
+                  ),
+                );
           } else if (state is TaskError) {
             return Center(
               child: Text(

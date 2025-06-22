@@ -40,13 +40,13 @@ class TaskDatabase {
     ''');
   }
 
-  // 🔹 Insert a task
+  // Insert a task
   Future<int> insertTask(Task task) async {
     final db = await database;
     return await db.insert('tasks', task.toMap());
   }
 
-  // 🔹 Get all tasks
+  // Get all tasks
   Future<List<Task>> getTasks() async {
     final db = await database;
     final result = await db.query('tasks', orderBy: 'dueDate ASC');

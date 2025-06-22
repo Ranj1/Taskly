@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'task_event.dart';
 import 'task_state.dart';
 import '../../data/database/task_database.dart';
-import '../../data/models/task_model.dart';
+
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final TaskDatabase db;
@@ -26,7 +26,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onAddTask(AddTask event, Emitter<TaskState> emit) async {
-    print(event.task);
     await db.insertTask(event.task);
     add(LoadTasks());
   }
