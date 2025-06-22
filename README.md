@@ -26,3 +26,19 @@ This app helps you add, manage, and filter your daily tasks with **BLoC state ma
 - **DevicePreview** — preview app across devices
 - **Lottie** — beautiful animations
 - **Material 3** — modern design guidelines
+
+## 🔧 Getting Started
+
+### ✅ Prerequisites
+- Flutter SDK ≥ 3.x
+- Android Studio or VS Code
+- Emulator or physical device
+
+---
+
+### 🚀 Installation
+
+1. **Clone the repo**:
+   ```bash
+   git clone https://github.com/yourusername/taskly_bloc_sqlite.git
+   cd taskly_bloc_sqlite
