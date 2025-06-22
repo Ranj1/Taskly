@@ -1,16 +1,28 @@
-# taskly_bloc_sqlite
+# 📝 Taskly - Flutter ToDo App
 
-Taskly is a basic task manager app built using Flutter, BLoC for state management, and SQLite for local storage. It helps users add, edit, delete, and manage their daily tasks with ease.
+**Taskly** is a beautiful and easy-to-use to-do list application built with Flutter.  
+This app helps you add, manage, and filter your daily tasks with **BLoC state management** and **SQLite** local database.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+✅ Create, edit, and delete tasks  
+✅ Prioritize tasks as **Low**, **Medium**, or **High**  
+✅ Filter tasks by **All**, **Completed**, or **Pending**  
+✅ Swipe to delete tasks  
+✅ Light & Dark theme support with a toggle  
+✅ Store all tasks in a local **SQLite** database  
+✅ Smooth animations using **Lottie**  
+✅ Responsive UI built with **Material 3**  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🧑‍💻 Tech Stack
+
+- **Flutter & Dart** — for cross-platform UI
+- **BLoC** — state management
+- **SQLite** — local data persistence
+- **DevicePreview** — preview app across devices
+- **Lottie** — beautiful animations
+- **Material 3** — modern design guidelines
