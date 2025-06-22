@@ -72,13 +72,7 @@ class MyApp extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
-              checkboxTheme: CheckboxThemeData(
-                checkColor: MaterialStateProperty.all(Colors.white),
-                fillColor: MaterialStateProperty.all(Colors.blue),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
+
               scaffoldBackgroundColor: const Color(0xFFF5F6FA),
               useMaterial3: true,
             ),
@@ -98,7 +92,7 @@ class MyApp extends StatelessWidget {
                 elevation: 0,
               ),
               scaffoldBackgroundColor: Color(0xFF121212),
-              useMaterial3: false,
+              useMaterial3: true,
             ),
             themeMode: themeMode,
             home: HomePage(

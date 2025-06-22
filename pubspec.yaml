@@ -4,7 +4,7 @@ description: "Taskly is a basic task manager app built using Flutter,
               It helps users add, edit, delete, and manage their daily tasks with ease."
 
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.6.1
