@@ -5,6 +5,7 @@ This app helps you add, manage, and filter your daily tasks with **BLoC state ma
 
 ---
 
+
 ## ✨ Features
 
 ✅ Create, edit, and delete tasks  
